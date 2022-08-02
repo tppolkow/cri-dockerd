@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 /*
@@ -28,10 +29,10 @@ import (
 	"runtime"
 
 	"github.com/blang/semver"
-    "github.com/sirupsen/logrus"
 	dockertypes "github.com/docker/docker/api/types"
 	dockercontainer "github.com/docker/docker/api/types/container"
 	dockerfilters "github.com/docker/docker/api/types/filters"
+	"github.com/sirupsen/logrus"
 	runtimeapi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
 
@@ -123,8 +124,10 @@ func (ds *dockerService) determinePodIPBySandboxID(sandboxID string) []string {
 			// Windows 1709 and 1803 doesn't have the Namespace support, so getIP() is called
 			// to replicate the DNS registry key to the Workload container (IP/Gateway/MAC is
 			// set separately than DNS).
+			logrus.Info("CONTAINER_NETWORK is empty")
 			ds.getIPs(sandboxID, r)
 		} else {
+			logrus.Infof("CONTAINER_NETWORK is not empty : %s", networkMode)
 			// ds.getIP will call the CNI plugin to fetch the IP
 			if containerIPs := ds.getIPs(c.ID, r); len(containerIPs) != 0 {
 				return containerIPs

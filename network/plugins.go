@@ -180,6 +180,8 @@ func InitNetworkPlugin(
 		pluginMap[name] = plugin
 	}
 
+	logrus.Infof("all plugins map : %v", pluginMap)
+
 	chosenPlugin := pluginMap[networkPluginName]
 	if chosenPlugin != nil {
 		err := chosenPlugin.Init(host, hairpinMode, nonMasqueradeCIDR, mtu)
